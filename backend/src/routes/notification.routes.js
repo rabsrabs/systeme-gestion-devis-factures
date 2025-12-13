@@ -1,10 +1,9 @@
 const express = require('express');
-const { authentification } = require('../middleware/auth.middleware');
 const router = express.Router();
+const { protect } = require('../middleware/auth.middleware');
 
-// Routes notifications - à implémenter
-router.get('/', authentification, (req, res) => {
-  res.json({ message: 'Liste des notifications - à implémenter' });
+router.get('/', protect, async (req, res) => {
+  res.json({ success: true, data: [], message: 'Notifications endpoint' });
 });
 
 module.exports = router;

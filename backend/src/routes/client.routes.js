@@ -1,14 +1,24 @@
 const express = require('express');
-const { authentification } = require('../middleware/auth.middleware');
 const router = express.Router();
+const { protect, authorize } = require('../middleware/auth.middleware');
+const { Client } = require('../models');
 
-// Routes clients - à implémenter
-router.get('/', authentification, (req, res) => {
-  res.json({ message: 'Liste des clients - à implémenter' });
+router.get('/', protect, async (req, res) => {
+  try {
+    const clients = await Client.findAll();
+    res.json({ success: true, data: clients });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
-router.post('/', authentification, (req, res) => {
-  res.json({ message: 'Créer un client - à implémenter' });
+router.post('/', protect, authorize('admin'), async (req, res) => {
+  try {
+    const client = await Client.create(req.body);
+    res.status(201).json({ success: true, data: client });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 module.exports = router;

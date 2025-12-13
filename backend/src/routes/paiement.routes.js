@@ -1,14 +1,9 @@
 const express = require('express');
-const { authentification } = require('../middleware/auth.middleware');
 const router = express.Router();
+const { protect, authorize } = require('../middleware/auth.middleware');
 
-// Routes paiements - à implémenter
-router.get('/', authentification, (req, res) => {
-  res.json({ message: 'Liste des paiements - à implémenter' });
-});
-
-router.post('/', authentification, (req, res) => {
-  res.json({ message: 'Enregistrer un paiement - à implémenter' });
+router.get('/', protect, async (req, res) => {
+  res.json({ success: true, data: [], message: 'Paiements endpoint' });
 });
 
 module.exports = router;

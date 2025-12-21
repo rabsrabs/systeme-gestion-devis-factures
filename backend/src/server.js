@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 const { testConnection } = require('./config/database');
 
 // Routes
@@ -13,6 +14,8 @@ const factureRoutes = require('./routes/facture.routes');
 const paiementRoutes = require('./routes/paiement.routes');
 const prestationRoutes = require('./routes/prestation.routes');
 const notificationRoutes = require('./routes/notification.routes');
+const utilisateurRoutes = require('./routes/utilisateur.routes');
+const peppolRoutes = require('./routes/peppol.routes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,17 +23,22 @@ const PORT = process.env.PORT || 5000;
 // ============================================
 // MIDDLEWARES
 // ============================================
-app.use(helmet()); // Sécurité des headers HTTP
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: '*',
   credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev')); // Logging des requêtes
+app.use(morgan('dev'));
 
 // ============================================
-// ROUTES
+// SERVIR LE FRONTEND
+// ============================================
+app.use(express.static(path.join(__dirname, '../../frontend/build')));
+
+// ============================================
+// ROUTES API
 // ============================================
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'API OMC fonctionnelle' });
@@ -43,16 +51,16 @@ app.use('/api/factures', factureRoutes);
 app.use('/api/paiements', paiementRoutes);
 app.use('/api/prestations', prestationRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/utilisateurs', utilisateurRoutes);
+app.use('/api/peppol', peppolRoutes);
 
 // ============================================
 // GESTION DES ERREURS
 // ============================================
 app.use((err, req, res, next) => {
   console.error('Erreur:', err);
-  
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Erreur interne du serveur';
-  
   res.status(statusCode).json({
     success: false,
     message,
@@ -60,12 +68,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Route 404
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route non trouvée'
-  });
+// ============================================
+// FRONTEND - Toutes les autres routes
+// ============================================
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/build', 'index.html'));
 });
 
 // ============================================
@@ -73,17 +80,15 @@ app.use((req, res) => {
 // ============================================
 const startServer = async () => {
   try {
-    // Test de connexion à la base de données
     await testConnection();
-    
-    // Démarrage du serveur
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`
 ╔════════════════════════════════════════╗
 ║   🚀 Serveur OMC démarré              ║
 ║   📡 Port: ${PORT}                        ║
 ║   🌍 Environnement: ${process.env.NODE_ENV || 'development'}      ║
 ║   📊 API: http://localhost:${PORT}/api    ║
+║   🔗 PEPPOL: Activé                    ║
 ╚════════════════════════════════════════╝
       `);
     });

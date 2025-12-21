@@ -13,11 +13,13 @@ const LigneDevis = sequelize.define('LigneDevis', {
   },
   quantite: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    allowNull: false,
+    defaultValue: 1
   },
   prix_unitaire: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0
   },
   tva: {
     type: DataTypes.DECIMAL(5, 2),
@@ -29,28 +31,15 @@ const LigneDevis = sequelize.define('LigneDevis', {
   },
   id_devis: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'devis',
-      key: 'id_devis'
-    }
+    allowNull: false
   },
   id_prestation: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'prestation_service',
-      key: 'id_prestation'
-    }
+    allowNull: true
   }
 }, {
   tableName: 'ligne_devis',
   timestamps: false
 });
-
-// Calcul du total de la ligne (virtuel)
-LigneDevis.prototype.calculerTotal = function() {
-  return parseFloat(this.quantite) * parseFloat(this.prix_unitaire);
-};
 
 module.exports = LigneDevis;

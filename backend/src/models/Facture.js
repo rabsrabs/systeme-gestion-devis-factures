@@ -18,7 +18,7 @@ const Facture = sequelize.define('Facture', {
   },
   date_echeance: {
     type: DataTypes.DATEONLY,
-    allowNull: false
+    allowNull: true
   },
   statut_paiement: {
     type: DataTypes.ENUM('non_payee', 'partielle', 'payee', 'en_retard'),
@@ -58,50 +58,19 @@ const Facture = sequelize.define('Facture', {
   },
   id_client: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'client',
-      key: 'id_client'
-    }
+    allowNull: true
   },
   id_devis: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-    references: {
-      model: 'devis',
-      key: 'id_devis'
-    }
+    allowNull: true
   },
   id_utilisateur: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'utilisateur',
-      key: 'id_utilisateur'
-    }
+    allowNull: true
   }
 }, {
   tableName: 'facture',
   timestamps: false
 });
-
-// Méthode pour calculer les montants
-Facture.prototype.calculerMontants = function() {
-  const montantHT = parseFloat(this.montant_ht) - parseFloat(this.remise);
-  const montantTVA = (montantHT * 21) / 100;
-  const montantTTC = montantHT + montantTVA;
-  const montantRestant = montantTTC - parseFloat(this.montant_paye);
-  
-  this.montant_tva = montantTVA.toFixed(2);
-  this.montant_ttc = montantTTC.toFixed(2);
-  this.montant_restant = montantRestant.toFixed(2);
-  
-  // Mise à jour du statut de paiement
-  if (montantRestant <= 0) {
-    this.statut_paiement = 'payee';
-  } else if (this.montant_paye > 0) {
-    this.statut_paiement = 'partielle';
-  }
-};
 
 module.exports = Facture;

@@ -22,7 +22,7 @@ const Devis = sequelize.define('Devis', {
   },
   date_validite: {
     type: DataTypes.DATEONLY,
-    allowNull: false
+    allowNull: true
   },
   taux_tva: {
     type: DataTypes.DECIMAL(5, 2),
@@ -35,8 +35,9 @@ const Devis = sequelize.define('Devis', {
   statut: {
     type: DataTypes.STRING(50),
     allowNull: false,
+    defaultValue: 'brouillon',
     validate: {
-      isIn: [['brouillon', 'envoye', 'accepte', 'refuse', 'expire']]
+      isIn: [['brouillon', 'envoye', 'accepte', 'refuse', 'expire', 'facture']]
     }
   },
   montant_ht: {
@@ -61,38 +62,15 @@ const Devis = sequelize.define('Devis', {
   },
   id_client: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'client',
-      key: 'id_client'
-    }
+    allowNull: false
   },
   id_utilisateur: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'utilisateur',
-      key: 'id_utilisateur'
-    }
+    allowNull: true
   }
 }, {
   tableName: 'devis',
-  timestamps: false,
-  hooks: {
-    beforeUpdate: (devis) => {
-      devis.date_maj = new Date();
-    }
-  }
+  timestamps: false
 });
-
-// Méthode pour calculer les montants
-Devis.prototype.calculerMontants = function() {
-  const montantHT = parseFloat(this.montant_ht) - parseFloat(this.remise);
-  const montantTVA = (montantHT * parseFloat(this.taux_tva)) / 100;
-  const montantTTC = montantHT + montantTVA;
-  
-  this.montant_tva = montantTVA.toFixed(2);
-  this.montant_ttc = montantTTC.toFixed(2);
-};
 
 module.exports = Devis;

@@ -7,6 +7,10 @@ const Client = sequelize.define('Client', {
     primaryKey: true,
     autoIncrement: true
   },
+  id_utilisateur: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
   nom: {
     type: DataTypes.STRING(100),
     allowNull: false

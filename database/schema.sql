@@ -31,6 +31,7 @@ CREATE TABLE client (
     type_client VARCHAR(20) CHECK (type_client IN ('particulier', 'professionnel')) DEFAULT 'particulier',
     actif BOOLEAN DEFAULT TRUE,
     notes TEXT,
+    id_utilisateur INTEGER,
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -54,6 +55,10 @@ CREATE TABLE utilisateur (
 -- ================================================
 -- TABLE: PRESTATION_SERVICE
 -- ================================================
+-- Lien client -> compte utilisateur (ajoute apres creation de la table utilisateur)
+ALTER TABLE client ADD CONSTRAINT fk_client_utilisateur
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur) ON DELETE SET NULL;
+
 CREATE TABLE prestation_service (
     id_prestation SERIAL PRIMARY KEY,
     code_prestation VARCHAR(50) UNIQUE NOT NULL,
@@ -206,13 +211,12 @@ INSERT INTO client (nom, prenom, email, telephone, adresse, ville, code_postal, 
 VALUES ('Dupont', 'Jean', 'jean.dupont@example.com', '+32 2 123 45 67', '123 Rue de la Loi', 'Bruxelles', '1000', 'professionnel');
 
 -- Insérer un utilisateur admin (mot de passe: admin123)
--- Note: En production, le mot de passe sera haché par bcrypt
 INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, role, telephone)
-VALUES ('Admin', 'Système', 'admin@omc.be', '$2a$10$YourHashedPasswordHere', 'admin', '+32 2 999 99 99');
+VALUES ('Admin', 'Système', 'admin@omc.be', '$2a$10$x5/61XaR9K0kkJB6uHjGE.CFCIJ7Z/dzjxK7J9DKDcOJJhy.LKkZC', 'admin', '+32 2 999 99 99');
 
 -- Insérer un utilisateur client (mot de passe: client123)
 INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, role, id_client)
-VALUES ('Dupont', 'Jean', 'jean.dupont@example.com', '$2a$10$YourHashedPasswordHere', 'client', 1);
+VALUES ('Dupont', 'Jean', 'jean.dupont@example.com', '$2a$10$Md.9WiVTF6B9NVNVuzu/Kue0SytIAhcqjsXMcIf7pRf47NE/GbLFq', 'client', 1);
 
 -- Insérer des prestations de service avec catégories et sous-catégories
 INSERT INTO prestation_service (code_prestation, nom, description, categorie, sous_categorie, unite, prix_unitaire, tva_applicable)
@@ -220,7 +224,7 @@ VALUES
 ('ELEC-001', 'Installation électrique', 'Installation complète circuit électrique', 'Électricité', 'Installation', 'm²', 150.00, 21.00),
 ('ELEC-002', 'Réparation tableau électrique', 'Diagnostic et réparation tableau', 'Électricité', 'Réparation', 'unité', 200.00, 21.00),
 ('PLOMB-001', 'Installation sanitaire', 'Installation système sanitaire complet', 'Plomberie', 'Installation', 'unité', 500.00, 21.00),
-('PLOMB-002', 'Réparation fuite', 'Détection et réparation fuite d\'eau', 'Plomberie', 'Réparation', 'intervention', 120.00, 21.00),
+('PLOMB-002', 'Réparation fuite', 'Détection et réparation fuite d''eau', 'Plomberie', 'Réparation', 'intervention', 120.00, 21.00),
 ('CHAUF-001', 'Installation chaudière', 'Pose et installation chaudière gaz', 'Chauffage', 'Installation', 'unité', 2500.00, 6.00),
 ('ISOL-001', 'Isolation toiture', 'Isolation thermique toiture', 'Isolation', 'Toiture', 'm²', 50.00, 6.00),
 ('ISOL-002', 'Isolation murs', 'Isolation thermique murs intérieurs', 'Isolation', 'Murs', 'm²', 40.00, 6.00),

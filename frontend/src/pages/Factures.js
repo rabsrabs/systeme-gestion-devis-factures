@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = 'http://10.150.5.69:5001/api';
+const API_URL = '/api';
 
 const Factures = () => {
   const [factures, setFactures] = useState([]);

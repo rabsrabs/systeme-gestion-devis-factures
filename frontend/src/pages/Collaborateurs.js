@@ -14,7 +14,7 @@ function Collaborateurs() {
 
   const fetchCollaborateurs = async () => {
     try {
-      const res = await axios.get('http://10.150.5.69:5001/api/utilisateurs', config);
+      const res = await axios.get('/api/utilisateurs', config);
       const admins = (res.data.data || []).filter(u => u.role === 'admin');
       setCollaborateurs(admins);
     } catch (error) {

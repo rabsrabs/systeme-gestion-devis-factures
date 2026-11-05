@@ -25,9 +25,9 @@ const Dashboard = () => {
   const fetchStats = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const devisRes = await axios.get('http://10.150.5.69:5001/api/devis', config);
+      const devisRes = await axios.get('/api/devis', config);
       let devisData = devisRes.data.data || [];
-      const facturesRes = await axios.get('http://10.150.5.69:5001/api/factures', config);
+      const facturesRes = await axios.get('/api/factures', config);
       let facturesData = facturesRes.data.data || [];
       
       if (!isAdmin) {
@@ -39,11 +39,11 @@ const Dashboard = () => {
       let collaborateursCount = 0;
       if (isAdmin) {
         try {
-          const clientsRes = await axios.get('http://10.150.5.69:5001/api/clients', config);
+          const clientsRes = await axios.get('/api/clients', config);
           clientsCount = clientsRes.data.data?.length || 0;
         } catch (e) { }
         try {
-          const usersRes = await axios.get('http://10.150.5.69:5001/api/utilisateurs', config);
+          const usersRes = await axios.get('/api/utilisateurs', config);
           collaborateursCount = (usersRes.data.data || []).filter(u => u.role === 'admin').length;
         } catch (e) { }
       }
@@ -61,7 +61,7 @@ const Dashboard = () => {
   const handleSaveProfile = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      await axios.put(`http://10.150.5.69:5001/api/clients/${user.id_client}`, profileData, config);
+      await axios.put(`/api/clients/${user.id_client}`, profileData, config);
       const updatedUser = { ...user, ...profileData };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setShowEditProfile(false);
@@ -79,7 +79,7 @@ const Dashboard = () => {
       if (doubleConfirm) {
         try {
           const config = { headers: { Authorization: `Bearer ${token}` } };
-          await axios.delete(`http://10.150.5.69:5001/api/clients/${user.id_client}`, config);
+          await axios.delete(`/api/clients/${user.id_client}`, config);
           alert('Votre compte a été supprimé avec succès.');
           localStorage.removeItem('token');
           localStorage.removeItem('user');

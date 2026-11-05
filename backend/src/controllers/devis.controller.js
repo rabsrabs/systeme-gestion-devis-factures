@@ -281,7 +281,8 @@ exports.convertirEnFacture = async (req, res) => {
       raison_remise: devis.raison_remise || '',
       statut_paiement: 'non_payee',
       id_devis: devis.id_devis,
-      id_client: devis.id_client
+      id_client: devis.id_client,
+      id_utilisateur: req.user.id_utilisateur || devis.id_utilisateur
     });
     const factureComplete = await Facture.findByPk(facture.id_facture, { include: [{ model: Client }] });
     if (devis.Client && devis.Client.email) {

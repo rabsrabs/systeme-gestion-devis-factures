@@ -16,7 +16,7 @@ function Clients() {
 
   const fetchClients = async () => {
     try {
-      const res = await axios.get('http://10.150.5.69:5001/api/clients', config);
+      const res = await axios.get('/api/clients', config);
       setClients(res.data.data || []);
     } catch (error) {
       console.error('Erreur:', error);
@@ -41,7 +41,7 @@ function Clients() {
 
   const handleSave = async (id) => {
     try {
-      await axios.put(`http://10.150.5.69:5001/api/clients/${id}`, formData, config);
+      await axios.put(`/api/clients/${id}`, formData, config);
       setEditingClient(null);
       fetchClients();
       alert('Client mis à jour !');
@@ -53,7 +53,7 @@ function Clients() {
   const handleDelete = async (id) => {
     if (window.confirm('Supprimer ce client ?')) {
       try {
-        await axios.delete(`http://10.150.5.69:5001/api/clients/${id}`, config);
+        await axios.delete(`/api/clients/${id}`, config);
         fetchClients();
         alert('Client supprimé !');
       } catch (error) {

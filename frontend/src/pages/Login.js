@@ -17,7 +17,7 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://10.150.5.69:5001/api/auth/login', formData);
+      const response = await axios.post('/api/auth/login', formData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.data));
       window.location.href = '/dashboard';

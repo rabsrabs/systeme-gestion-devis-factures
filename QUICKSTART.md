@@ -52,8 +52,8 @@ npm --version
 ### 2. Cloner le projet
 
 ```bash
-git clone <url-du-repo>
-cd omc-project
+git clone https://github.com/rabsrabs/systeme-gestion-devis-factures.git
+cd systeme-gestion-devis-factures
 ```
 
 ### 3. Configuration de la base de données
@@ -67,19 +67,27 @@ psql -U postgres
 CREATE DATABASE omc_db;
 \q
 
-# Exécuter les migrations
-psql omc_db < database/migrations/001_initial_schema.sql
-
-# Charger les données de test (optionnel)
-psql omc_db < database/seeds/001_test_data.sql
+# Créer les tables + données de test (un seul fichier)
+psql -U postgres omc_db < database/schema.sql
 ```
+
+> ⚠️ Utiliser **`database/schema.sql`** : c'est le seul schéma qui correspond au code.
+> `database/migrations/` et `database/seeds/` sont d'anciennes versions, ne pas les utiliser.
+
+**Comptes de test créés automatiquement :**
+
+| Rôle | Email | Mot de passe |
+|------|-------|--------------|
+| Admin | `admin@omc.be` | `admin123` |
+| Client | `jean.dupont@example.com` | `client123` |
 
 ### 4. Configuration du Backend
 
 ```bash
 cd backend
 
-# Installer les dépendances
+# Installer les dépendances (obligatoire, même si node_modules existe déjà :
+# le dossier commité est incomplet)
 npm install
 
 # Copier et configurer les variables d'environnement

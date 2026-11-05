@@ -49,7 +49,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('http://10.150.5.69:5001/api/auth/register', { ...formData, role });
+      const response = await axios.post('/api/auth/register', { ...formData, role });
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.data));
       window.location.href = '/dashboard';
